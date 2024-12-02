@@ -15,6 +15,9 @@ st.set_page_config(page_title="🌸 Iris Flower Classification", layout="wide")
 scaler = joblib.load('model/scaler.pkl')
 model = joblib.load('model/best_trained_model.pkl')
 
+# Load training history
+history = joblib.load('model/training_history.pkl')
+
 # Mapping of encoded species back to original labels
 species_mapping = {0: 'Iris-setosa', 1: 'Iris-versicolor', 2: 'Iris-virginica'}
 
@@ -112,6 +115,37 @@ with col2:
         image_path = f"images/{predicted_species}.jpg"
         image = Image.open(image_path)
         st.image(image, caption=predicted_species, use_container_width=True)
+
+# Plot learning curves
+st.subheader("📈 Learning Curves")
+fig, ax = plt.subplots(1, 2, figsize=(12, 4))
+
+# Plot training & validation accuracy values
+ax[0].plot(history['accuracy'])
+ax[0].plot(history['val_accuracy'])
+ax[0].set_title('Model accuracy')
+ax[0].set_ylabel('Accuracy')
+ax[0].set_xlabel('Epoch')
+ax[0].legend(['Train', 'Validation'], loc='upper left')
+
+# Plot training & validation loss values
+ax[1].plot(history['loss'])
+ax[1].plot(history['val_loss'])
+ax[1].set_title('Model loss')
+ax[1].set_ylabel('Loss')
+ax[1].set_xlabel('Epoch')
+ax[1].legend(['Train', 'Validation'], loc='upper left')
+
+st.pyplot(fig)
+
+# Conclusion on Model Fit
+st.subheader("🔍 Conclusion on Model Fit")
+if history['accuracy'][-1] > history['val_accuracy'][-1]:
+    st.write("The model may be overfitting. Consider using regularization techniques or gathering more data.")
+elif history['accuracy'][-1] < history['val_accuracy'][-1]:
+    st.write("The model may be underfitting. Consider increasing model complexity or improving feature engineering.")
+else:
+    st.write("The model appears to be well-fitted. Continue monitoring performance on unseen data.")
 
 # Footer
 st.markdown("---")
