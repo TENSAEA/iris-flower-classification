@@ -7,6 +7,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import re
 from PIL import Image
+import scripts.model_evaluation as model_evaluation
+
+# Evaluate the model
+output = model_evaluation.evaluate_model()
 
 # Set page configuration for better layout
 st.set_page_config(page_title="🌸 Iris Flower Classification", layout="wide")
@@ -115,6 +119,13 @@ with col2:
         image_path = f"images/{predicted_species}.jpg"
         image = Image.open(image_path)
         st.image(image, caption=predicted_species, use_container_width=True)
+
+        # Display output in the app
+st.subheader("Model Evaluation Results")
+st.write(f"Validation Accuracy: {output['Validation Accuracy']:.4f}")
+st.write(f"Validation Precision: {output['Validation Precision']:.4f}")
+st.write(f"Validation Recall: {output['Validation Recall']:.4f}")
+st.write(f"Validation F1 Score: {output['Validation F1 Score']:.4f}")
 
 # Plot learning curves
 st.subheader("📈 Learning Curves")
